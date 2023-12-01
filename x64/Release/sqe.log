@@ -1,0 +1,6 @@
+﻿  Source1.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 183 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  sqe.vcxproj -> F:\Db programming\testProject\sqe\x64\Release\sqe.exe

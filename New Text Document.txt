@@ -1,0 +1,8 @@
+analyzer.executeStatement(1, "int x = 5;");
+    analyzer.executeStatement(2, "int y = 10;");
+    analyzer.executeStatement(4, "if (x > y) {");
+    analyzer.executeStatement(5, "  // Do something");
+    analyzer.executeStatement(6, "}");
+    analyzer.executeStatement(8, "while (x < 100) {");
+    analyzer.executeStatement(9, "  // Do something");
+    }

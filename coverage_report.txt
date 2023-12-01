@@ -1,0 +1,13 @@
+Statement Coverage Report:
+Line 1: 
+Line 2:   int x = 5;
+Line 3:   int y = 10;
+Line 4:   if (x > y) 
+Line 5:   {
+Line 6:     
+Line 7:   }
+Line 8:   while (x < 100) 
+Line 9:   {
+Line 10:     
+Line 11: }
+Coverage: 100%
