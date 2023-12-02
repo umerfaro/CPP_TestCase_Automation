@@ -1,4 +1,4 @@
-F:\Db programming\testProject\sqe\x64\Debug\sqe.vcxproj.CopyComplete
 F:\Db programming\testProject\sqe\x64\Debug\sqe.exe
+F:\Db programming\testProject\sqe\x64\Debug\sqe.vcxproj.CopyComplete
 F:\Db programming\testProject\sqe\x64\Debug\libcurl-d.dll
 F:\Db programming\testProject\sqe\x64\Debug\zlibd1.dll

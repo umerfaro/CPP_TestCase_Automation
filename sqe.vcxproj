@@ -133,7 +133,15 @@
     <ClCompile Include="Source1.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClangCode.h" />
+    <ClInclude Include="CodeAnalyser.h" />
+    <ClInclude Include="CondditionList.h" />
+    <ClInclude Include="FuntionList.h" />
+    <ClInclude Include="FuntionNode.h" />
     <ClInclude Include="HTTPRequest.h" />
+    <ClInclude Include="LinkedList.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="Parameter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
