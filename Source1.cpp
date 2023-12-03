@@ -16,6 +16,13 @@
 #include"CondditionList.h"
 #include"ClangCode.h"
 #include"CodeAnalyser.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
 using namespace std;
 
 string variableInfo;
@@ -25,35 +32,8 @@ string conditionInfo;
 
 
 
-// --- bounday values check ---
-//void findBoundaryValues(const LinkedList& userInputList) {
-//    Node* current = userInputList.head;
-//
-//    while (current) {
-//        cout << "Variable: " << current->varName << " (Type: " << current->varType << ")";
-//
-//        if (current->varType == "int") 
-//        {
-//        
-//            cout << " Boundary Values: [" << -numeric_limits<int>::min() << ", " << numeric_limits<int>::max() << "]" << endl;
-//        
-//        }
-//        else if (current->varType == "float") {
-//            cout << " Boundary Values: [" << -numeric_limits<float>::max() << ", " << numeric_limits<float>::max() << "]" << endl;
-//        }
-//        else if (current->varType == "double") {
-//            cout << " Boundary Values: [" << -numeric_limits<double>::max() << ", " << numeric_limits<double>::max() << "]" << endl;
-//        }
-//        else if (current->varType == "char") {
-//            cout << " Boundary Values: [" << 0 << ", " << 255 << "]" << endl;
-//        }
-//        else {
-//            cout << " Unknown variable type : " << current->varType << endl;
-//        }
-//        current = current->next;
-//    }
-//}
-//// --- main function ---
+
+
 
 
 
@@ -161,7 +141,63 @@ void mapTestCasesToCode(const std::vector<TestCase>& testCases, const LinkedList
     }
 }
 
+/////////////////////////////////////////////
 
+int executeCommand(const std::string& command) {
+#ifdef _WIN32
+    return system(command.c_str());
+#else
+    // On Unix-like systems, use fork and exec
+    pid_t pid = fork();
+
+    if (pid == -1) {
+        std::cerr << "Error: Fork failed.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    else if (pid == 0) {
+        // Child process
+        execl("/bin/sh", "sh", "-c", command.c_str(), NULL);
+        std::cerr << "Error: Exec failed.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    else {
+        // Parent process
+        int status;
+        waitpid(pid, &status, 0);
+        return WEXITSTATUS(status);
+    }
+#endif
+}
+
+/// <summary>
+/// instrumentCodeForCoverage
+/// </summary>
+/// <param name="sourceFile"></param>
+/// <param name="outputExecutable"></param>
+void instrumentCodeForCoverage(const std::string& sourceFile, const std::string& outputExecutable) {
+    // Compile the code with GCC and coverage options
+    std::string compileCommand = "D:\\CodeBlocks\\MinGW\\bin\\g++ -fprofile-arcs -ftest-coverage -o " + outputExecutable + " " + sourceFile;
+    if (executeCommand(compileCommand) != 0) {
+        std::cerr << "Error: Compilation failed.\n";
+        std::exit(EXIT_FAILURE);
+    }
+
+    // Run the generated executable to generate coverage data
+    std::string runCommand = outputExecutable;
+    if (executeCommand(runCommand) != 0) {
+        std::cerr << "Error: Execution failed.\n";
+        std::exit(EXIT_FAILURE);
+    }
+
+    // Use gcov to generate coverage reports
+    std::string gcovCommand = "gcov " + sourceFile;
+    if (executeCommand(gcovCommand) != 0) {
+        std::cerr << "Error: Gcov command failed.\n";
+        std::exit(EXIT_FAILURE);
+    }
+
+    std::cout << "Code instrumentation and coverage generation complete.\n";
+}
 
 
 
@@ -254,41 +290,22 @@ int main() {
      mapTestCasesToCode(testCases, userInputList, functionList);
 
 
-   // findBoundaryValues(userInputList);
+
+     //use after gunit test has been run
+
+     // Instrument the code for coverage
+     //std::string sourceFilePath = "question2.cpp";
+     //std::string outputExecutablePath = "b";
+
+     //// Call the function to instrument the code
+     //instrumentCodeForCoverage(sourceFilePath, outputExecutablePath);
+
+
     clang_disposeTranslationUnit(tu);
     clang_disposeIndex(index);
 
     return 0;
 }
-
-//int main()
-//{
-//    // Replace "YOUR_OPENAI_API_KEY" and "DUMMY_URL" with your actual OpenAI API key and URL
-//    std::string apiKey = "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";
-//    std::string apiUrl = "https://api.openai.com/v1/chat/completions";
-//
-//    // Create an instance of HttpRequest
-//    HttpRequest httpRequest(apiKey, apiUrl);
-//
-//    // Define the JSON payload with messages
-//    std::string requestData = R"(
-//    {
-//        "model": "gpt-3.5-turbo",
-//        "messages": [
-//            {"role": "user", "content": "How are you?"}
-//        ]
-//    }
-//    )";
-//
-//    // Make the HTTP request
-//    httpRequest.post(requestData);
-//
-//    // Display the response
-//    //std::cout << "Response:\n" << httpRequest.getResponse() << std::endl;
-//    httpRequest.extractContent(httpRequest.getResponse());
-//
-//    return 0;
-//}
 
 
 //Prompt:
