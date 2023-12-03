@@ -3,9 +3,15 @@
 #include <iostream>
 #include <string>
 #include <nlohmann/json.hpp>
+using namespace std;
+ 
 
-class HttpRequest {
+class HttpRequest 
+{
 public:
+
+    string promtInfo = "";
+
     HttpRequest(const std::string& apiKey, const std::string& apiUrl)
         : apiKey(apiKey), apiUrl(apiUrl), responseBuffer(nullptr) {
         // Initialize libcurl
@@ -70,7 +76,8 @@ public:
     }
 
 
-    void extractContent(const std::string& jsonResponse) {
+    void extractContent(const std::string& jsonResponse ) 
+    {
         try {
             // Parse JSON
             nlohmann::json responseJson = nlohmann::json::parse(jsonResponse);
@@ -82,6 +89,7 @@ public:
 
                 // Display or store the content as needed
                 std::cout << "Generated response: " << content << std::endl;
+                promtInfo += content;
             }
             else {
                 std::cerr << "Error: Unable to extract content from the response." << std::endl;

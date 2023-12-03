@@ -100,6 +100,71 @@ string generatePrompt(const LinkedList& userInputList, const FunctionList& funct
     return prompt.str();
 }
 
+struct TestCase {
+    double num1;
+    double num2;
+};
+
+
+std::vector<TestCase> parseTestCases(const std::string& response) {
+    // Create a regular expression pattern to match test case lines
+    std::regex testCasePattern(R"(Test Case \d+:\nnum1 = ([^,]+), num2 = ([^\n]+))");
+
+    // Create a vector to store test cases
+    std::vector<TestCase> testCases;
+
+    // Use regex iterator to find test case lines in the response
+    auto testCaseIt = std::sregex_iterator(response.begin(), response.end(), testCasePattern);
+    auto testCaseEnd = std::sregex_iterator();
+
+    while (testCaseIt != testCaseEnd) {
+        TestCase testCase;
+        testCase.num1 = std::stod((*testCaseIt)[1].str());
+        testCase.num2 = std::stod((*testCaseIt)[2].str());
+        testCases.push_back(testCase);
+        ++testCaseIt;
+    }
+
+    return testCases;
+}
+
+
+
+void mapTestCasesToCode(const std::vector<TestCase>& testCases, const LinkedList& userInputList, const FunctionList& functionList) {
+    std::cout << "Mapping Test Cases to Code Components:\n";
+
+    // Iterate through test cases
+    for (size_t i = 0; i < testCases.size(); ++i) {
+        std::cout << "Test Case " << i + 1 << ":\n";
+        std::cout << "num1 = " << testCases[i].num1 << ", num2 = " << testCases[i].num2 << "\n";
+
+        // Map test case to variables
+        Node* currentVariable = userInputList.head;
+        while (currentVariable) {
+            std::cout << "Variable: " << currentVariable->varName << " = " << currentVariable->varType << " -> Value: ";
+            if (currentVariable->varType == "double") {
+                std::cout << (currentVariable->varName == "num1" ? testCases[i].num1 : testCases[i].num2);
+            }
+            std::cout << "\n";
+            currentVariable = currentVariable->next;
+        }
+
+        // Map test case to functions
+        FunctionNode* currentFunction = functionList.head;
+        while (currentFunction) {
+            std::cout << "Function: " << currentFunction->funcName << "\n";
+            // You can add more logic here to map test cases to specific functions if needed
+            currentFunction = currentFunction->next;
+        }
+
+        std::cout << "--------------------------------\n";
+    }
+}
+
+
+
+
+
 
 int main() {
     CXIndex index = clang_createIndex(0, 0);
@@ -160,13 +225,34 @@ int main() {
     // Make the HTTP request
     httpRequest.post(requestData);
 
+
     // Display the response
     //std::cout << "Response:\n" << httpRequest.getResponse() << std::endl;
-    httpRequest.extractContent(httpRequest.getResponse());
+     httpRequest.extractContent(httpRequest.getResponse());
 
+     cout<<endl;
 
+     cout<< "............................................. \n";
+     cout << httpRequest.promtInfo << endl;
+     
 
-   
+     cout << endl;
+
+     cout << "............................................. \n";
+     
+     cout << "after pasing \n";
+
+     // Call the function to parse test cases
+     std::vector<TestCase> testCases = parseTestCases(httpRequest.promtInfo);
+
+     //// Display the extracted test case information
+     //for (size_t i = 0; i < testCases.size(); ++i) {
+     //    std::cout << "Test Case " << i + 1 << ":\n";
+     //    std::cout << "num1 = " << testCases[i].num1 << ", num2 = " << testCases[i].num2 << "\n";
+     //}
+
+     mapTestCasesToCode(testCases, userInputList, functionList);
+
 
    // findBoundaryValues(userInputList);
     clang_disposeTranslationUnit(tu);
