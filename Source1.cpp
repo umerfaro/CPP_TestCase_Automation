@@ -239,7 +239,7 @@ int main() {
     string prompt = generatePrompt(userInputList, functionList, conditionList);
     std::cout << "Prompt:\n" << prompt << std::endl;
 
-    std::string apiKey = "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";
+    std::string apiKey = "sk-aio";
     std::string apiUrl = "https://api.openai.com/v1/chat/completions";
 
     // Create an instance of HttpRequest
